@@ -5,16 +5,19 @@ import dailyReward from "../../../assets/daily-rewards.png";
 import dailyReward_notReady from "../../../assets/daily-rewards_not_ready.png";
 import backButton from "../../../assets/back-button.png"
 
-const RewardPage = ({ handleStateChange }) => {
+interface RewardPageProps {
+    handleStateChange: (state: string) => void; // Define the expected type for handleStateChange
+}
+
+const RewardPage: React.FC<RewardPageProps> = ({ handleStateChange }) => {
     const [rewardsInfo, setRewardsInfo] = useState<any>(null);
     const [countdown, setCountdown] = useState('');
     const { userAccount, peerLink, peerSystemContracts } = useWeb3();
 
-
     const getRewardsInfo = async () => {
         if (userAccount && peerSystemContracts.peerRewards) {
             const response = await peerSystemContracts.peerRewards.methods.getUserRewards(userAccount.address).call();
-            console.log(response)
+            console.log(response);
             setRewardsInfo(response);
         }
     };
@@ -24,7 +27,6 @@ const RewardPage = ({ handleStateChange }) => {
             await peerSystemContracts.peerRewards.methods.claimDailyReward().send({ from: userAccount.address });
         }
     };
-
 
     useEffect(() => {
         getRewardsInfo();
@@ -54,12 +56,9 @@ const RewardPage = ({ handleStateChange }) => {
         return () => clearInterval(timer);
     }, [rewardsInfo]);
 
-
-
     return (
         <>
             {rewardsInfo ? (
-
                 <div className={styles.rewardsContainer}>
                     <img className={styles.backButton} onClick={() => handleStateChange("Home")} src={backButton} alt="" />
                     <h2 className={styles.rewardsTitle}>Rewards Information</h2>
@@ -95,7 +94,6 @@ const RewardPage = ({ handleStateChange }) => {
                 </>
             )}
         </>
-
     );
 };
 
