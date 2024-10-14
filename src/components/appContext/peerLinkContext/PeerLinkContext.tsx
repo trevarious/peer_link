@@ -2,35 +2,35 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useWeb3 } from '../../Web3/Web3';
 
-interface BioType {
-    name: string;
-    aboutMe: string;
-}
-interface DepositsType {
-    tokenDeposits: string[]; //tokenDepositAddresses
-    polDeposits: number | bigint;
-}
+// interface BioType {
+//     name: string;
+//     aboutMe: string;
+// }
+// interface DepositsType {
+//     tokenDeposits: string[]; //tokenDepositAddresses
+//     polDeposits: number | bigint;
+// }
 
-interface UserInfoType {
-    info: BioType;
-    friendCount: number | null;
-    reputation: number | null;
-    friends: string[]; // friends addresses
-    flexNFTs: number[] | null;
-    deposits: DepositsType;
+// interface UserInfoType {
+//     info: BioType;
+//     friendCount: number | null;
+//     reputation: number | null;
+//     friends: string[]; // friends addresses
+//     flexNFTs: number[] | null;
+//     deposits: DepositsType;
 
 
-}
+// }
 
-interface RequestInfoType {
-    requesterAddress: string | null;
-    requesterName: string | null;
-    timestamp: string | number | bigint | null;
-}
+// interface RequestInfoType {
+//     requesterAddress: string | null;
+//     requesterName: string | null;
+//     timestamp: string | number | bigint | null;
+// }
 interface PeerLinkContextType {
     userStatus: any;
-    userInfo: UserInfoType;
-    requests: RequestInfoType;
+    // userInfo: UserInfoType;
+    // requests: RequestInfoType;
     peerLink: any;
     // checkAccountStatus: (userAddress: any) => boolean;
     mintUser: (userAddress: any, username: any, aboutMe: any) => Promise<void>;
@@ -65,8 +65,8 @@ const PeerLinkContext = createContext<PeerLinkContextType | undefined>(undefined
 export const PeerLinkProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { userAccount, peerLink, web3 } = useWeb3();
     const [userStatus, setUserStatus] = useState<any>(false);
-    const [userInfo, setUserInfo] = useState<any>(null);
-    const [requests, setRequests] = useState<any>(null);
+    // const [userInfo, setUserInfo] = useState<any>(null);
+    // const [requests, setRequests] = useState<any>(null);
     const checkUserStatus = async () => {
         if (peerLink && web3 && userAccount) {
             try {
@@ -97,8 +97,8 @@ export const PeerLinkProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return (
         <PeerLinkContext.Provider value={{
             userStatus,
-            userInfo,
-            requests,
+            // userInfo,
+            // requests,
             peerLink,
             mintUser
 

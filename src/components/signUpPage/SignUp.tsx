@@ -3,7 +3,7 @@ import Loading from "../loading/Loading";
 import styles from "./SignUp.module.css"
 
 const SignUp = () => {
-    const { userAccount, isLoading, peerLink, connectionStatus, credAddress } = useWeb3();
+    const { userAccount, isLoading, connectionStatus, credAddress } = useWeb3();
 
 
 

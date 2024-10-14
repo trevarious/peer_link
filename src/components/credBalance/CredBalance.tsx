@@ -1,4 +1,3 @@
-import React from 'react';
 import { useWeb3 } from "../Web3/Web3";
 import styles from "./CredBalance.module.css";
 

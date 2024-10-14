@@ -1,25 +1,25 @@
-; import { useEffect, useState } from "react";
-import { usePeerLinkContext } from "../appContext/peerLinkContext/PeerLinkContext";
+; import { useState } from "react";
+// import { usePeerLinkContext } from "../appContext/peerLinkContext/PeerLinkContext";
 import { useWeb3 } from "../Web3/Web3";
 import styles from "./SSignUp.module.css"
-import Web3 from "web3";
-const squareContainer = document.getElementById('squareContainer');
+// import Web3 from "web3";
+// const squareContainer = document.getElementById('squareContainer');
 const SSignUp = () => {
     const [bioInput, setBioInput] = useState('');
     const [usernameInput, setUsernameInput] = useState('');
     const [walletAddressInput, setWalletAddressInput] = useState('');
     const { userAccount, peerLink } = useWeb3();
-    const { userStatus } = usePeerLinkContext();
-    const [doesAccountExist, setDoesAccountExist] = useState<any>(null);
+    // const { userStatus } = usePeerLinkContext();
+    // const [doesAccountExist, setDoesAccountExist] = useState<any>(null);
 
-    const checkUserStatus = async () => {
-        if (userAccount && peerLink) {
-            const response = await peerLink.methods.checkAccountStatus(userAccount.address).call();
-            setDoesAccountExist(response);
-            console.log(response);
+    // const checkUserStatus = async () => {
+    //     if (userAccount && peerLink) {
+    //         const response = await peerLink.methods.checkAccountStatus(userAccount.address).call();
+    //         setDoesAccountExist(response);
+    //         console.log(response);
 
-        }
-    }
+    //     }
+    // }
     const handleTestMint = async () => {
         if (userAccount && peerLink) {
             try {
@@ -78,9 +78,9 @@ const SSignUp = () => {
     const handleWalletAddressChange = (e: any) => {
         setWalletAddressInput(e.target.value);
     }
-    useEffect(() => {
-        checkUserStatus();
-    }, [peerLink, userAccount]);
+    // useEffect(() => {
+    //     checkUserStatus();
+    // }, [peerLink, userAccount]);
 
     return (
         <>

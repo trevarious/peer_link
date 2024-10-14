@@ -3,11 +3,11 @@ import { useWeb3 } from "../Web3/Web3";
 import styles from './HomePage.module.css';
 import peerLinkLogo from "../../assets/peer-link-logo-nobg-big.png";
 import credCoin from "../../assets/cred-erc.png";
-import addFriends from "../../assets/add-friend.png";
+// import addFriends from "../../assets/add-friend.png";
 import increaseReputation from "../../assets/increase-reputation.png";
-import viewAll from "../../assets/view-all.png";
-import dailyReward from "../../assets/daily-rewards.png";
-import dailyReward_notReady from "../../assets/daily-rewards_not_ready.png";
+// import viewAll from "../../assets/view-all.png";
+// import dailyReward from "../../assets/daily-rewards.png";
+// import dailyReward_notReady from "../../assets/daily-rewards_not_ready.png";
 import RewardPage from "./rewardPage/RewardPage";
 
 const HomePage = () => {
@@ -34,11 +34,11 @@ const HomePage = () => {
         }
     };
 
-    const onDailyRewardClaim = async () => {
-        if (userAccount && peerSystemContracts.peerRewards) {
-            await peerSystemContracts.peerRewards.methods.claimDailyReward().send({ from: userAccount.address });
-        }
-    };
+    // const onDailyRewardClaim = async () => {
+    //     if (userAccount && peerSystemContracts.peerRewards) {
+    //         await peerSystemContracts.peerRewards.methods.claimDailyReward().send({ from: userAccount.address });
+    //     }
+    // };
 
     const getUserCredBalance = async () => {
         if (userAccount && peerLink) {
@@ -77,6 +77,7 @@ const HomePage = () => {
                     setCountdown(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
                 } else {
                     setCountdown('Claim available!');
+                    console.log(countdown);
                 }
             }
         }, 1000);
