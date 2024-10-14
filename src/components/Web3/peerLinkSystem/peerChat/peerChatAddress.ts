@@ -1,0 +1,3 @@
+const peerChatAddress = '0x06CbFc3509F0d495270D2ACb947877164a69Cd0E'
+
+export default peerChatAddress

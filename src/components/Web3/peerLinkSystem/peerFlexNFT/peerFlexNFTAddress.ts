@@ -1,0 +1,3 @@
+const peerFlexNFTAddress = '0x624c938570f1196a6f2C7b7DC56D450d97E40111'
+
+export default peerFlexNFTAddress

@@ -1,0 +1,3 @@
+const peerGroupAddress = '0x9474155445b0F7D5452fbAbd55714cD2CefD6961'
+
+export default peerGroupAddress

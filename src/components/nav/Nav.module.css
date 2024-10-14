@@ -1,0 +1,280 @@
+.nav {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 7.5rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #020617;
+    user-select: none;
+}
+
+.leftNav {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+.sepoliaImg {
+    visibility: hidden;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.addressContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+
+
+}
+
+.addressContainer:hover .sepoliaImg {
+    visibility: visible;
+    opacity: 1;
+}
+
+.truncatedAddress {
+    color: #4ade80;
+}
+
+.connectButton {
+    color: white;
+    background-color: #34d3992f;
+    padding: 0.5rem;
+    font-weight: 700;
+}
+
+.rightNav {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    transform: translateX(800px);
+    transition: opacity 400ms ease, transform 450ms ease 50ms;
+}
+
+.rightNav.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.rightNavItem {
+    color: #F5F5F5;
+    width: auto;
+    /* Adjust values based on your design */
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+    font-size: 1.5rem;
+    /* Adjust these values */
+    font-weight: 400;
+
+}
+
+
+.ethImg {
+    width: 1.25rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.25rem;
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.lotteryStateOpen {
+    color: #32CD32;
+    font-size: 1.6rem;
+    /* or any color you prefer for OPEN */
+}
+
+.lotteryStateCalculating {
+    color: orange;
+    font-size: 1.6rem;
+    /* or any color you prefer for CALCULATING */
+}
+
+.lotteryStateClosed {
+    color: red;
+    font-size: 1.6rem;
+    /* or any color you prefer for CLOSED */
+}
+
+
+.previousDraw {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 500px;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+
+}
+
+.last {
+    flex-direction: column !important;
+    align-items: flex-start;
+}
+
+.lastText {
+    margin-right: 0.6rem;
+}
+
+.previousWinningNumbers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    border: 1px solid #6b7280;
+    background: linear-gradient(to top, #505050 1%, #f8fafc 50%);
+    color: #7e22ce;
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 2.25rem;
+    font-family: "Libre Baskerville";
+    font-weight: 400;
+    border-radius: 50%;
+}
+
+.previousWinningNumbers:first-child {
+    margin-left: 5px;
+}
+
+.rightNavSmallScreen {
+    display: none;
+}
+
+.rightNavSmallScreen.show {
+    display: block;
+}
+
+.menuButtonSmallScreen {
+    display: none;
+}
+
+.menuButtonLargeScreen {
+    position: absolute;
+    right: 1.5rem;
+    transition: right 500ms ease, background-color 250ms ease, color 500ms ease;
+    background-color: #34d3997b;
+    color: white;
+    margin-right: 1rem;
+}
+
+.menuButtonLargeScreen.show {
+    right: 50%;
+    background-color: #d33434a4;
+    color: #c084fc;
+}
+
+
+
+@media (max-width: 960px) {
+    .nav {
+        height: 2.5rem;
+    }
+
+    .leftNav {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .title {
+        width: 10.2rem;
+        height: 100%;
+        margin-top: 1rem;
+    }
+
+    .rightNav {
+        display: none;
+    }
+
+    .menuButtonSmallScreen {
+        display: block;
+        background: #022c22;
+        color: #a7f3d0;
+        border: 1px solid #34d3997b;
+
+    }
+
+    .menuButtonLargeScreen {
+        display: none;
+    }
+
+    .rightNavSmallScreen {
+        display: none;
+    }
+
+    .rightNavSmallScreen.show {
+        position: absolute;
+        background-color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 90vh;
+        top: 4rem;
+        left: 0;
+        border: 1px solid gold;
+        z-index: 100;
+
+    }
+
+    .smallScreenTitle {
+        position: absolute;
+        top: 0.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid transparent;
+        border-bottom-color: #32CD32;
+    }
+
+    .rightNavItem {
+        text-align: left;
+        height: 50px;
+        width: 100%;
+        justify-content: center;
+        font-size: 2rem;
+        border: 0.5rem solid transparent;
+        margin-bottom: 0.5rem;
+        border-left-color: #32CD32;
+        border-right-color: #32CD32;
+    }
+
+    .previousDraw {
+        width: 100%;
+    }
+
+    .last {
+        width: 100%;
+    }
+
+
+    .previousWinningNumbers {
+        margin-right: 0.5rem;
+    }
+
+    .previousWinningNumbers:first-child {
+        margin-left: 0.5rem;
+    }
+
+    .ethImg {
+        width: 2.5rem;
+    }
+}

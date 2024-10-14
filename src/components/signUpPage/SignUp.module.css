@@ -1,0 +1,19 @@
+.container {
+    width: 25%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    padding: 15px
+}
+
+.accountContainer {
+    width: 100%;
+    background-color: aliceblue;
+    border-radius: 8px;
+    margin: 15px;
+}
+
+.p {
+    font-size: .9rem;
+    letter-spacing: .1px;
+}

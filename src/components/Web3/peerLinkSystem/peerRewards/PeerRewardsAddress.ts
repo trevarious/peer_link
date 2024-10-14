@@ -1,0 +1,3 @@
+const peerRewardsAddress = '0xcDAd81928F637B10f97250B641fC7DFB687A3b32'
+
+export default peerRewardsAddress
