@@ -9,6 +9,8 @@ import increaseReputation from "../../assets/increase-reputation.png";
 // import dailyReward from "../../assets/daily-rewards.png";
 // import dailyReward_notReady from "../../assets/daily-rewards_not_ready.png";
 import RewardPage from "./rewardPage/RewardPage";
+import SwitchNetworks from "../switchNetworks/SwitchNetworks";
+const ARBITRUM_SEPOLIA_CHAIN_ID = 0x66eee;
 
 const HomePage = () => {
     const [userInfo, setUserInfo] = useState<any>(null);
@@ -17,7 +19,7 @@ const HomePage = () => {
     const [activeButton, setActiveButton] = useState<string>('home');
     const [activeSubScreen, setActiveSubScreen] = useState<any>('Home');
     const [countdown, setCountdown] = useState('');
-    const { userAccount, peerLink, peerSystemContracts } = useWeb3();
+    const { userAccount, peerLink, peerSystemContracts, chainId } = useWeb3();
 
     const getUserInfo = async () => {
         if (userAccount && peerLink) {
@@ -86,7 +88,6 @@ const HomePage = () => {
     }, [rewardsInfo]);
 
 
-
     const handleButtonClick = (buttonName: string) => {
         setActiveButton(buttonName);
     };
@@ -94,47 +95,49 @@ const HomePage = () => {
         setActiveSubScreen(name);
     }
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.profileCard}>
-                <div className={styles.profileHeader}>
-                    <img src={peerLinkLogo} alt="Profile" className={styles.profileImg} />
-                    <h1 className={styles.profileName}>{userInfo ? userInfo[0][0] : "Loading"}</h1>
-                    <p className={styles.profileBio}>{userInfo ? userInfo[0][1] : "Loading"}</p>
-                </div>
-                {activeSubScreen == "Home" ?
-                    <div className={styles.profileBody}>
-                        <div className={styles.statsContainer}>
-                            <div className={`${styles.statItem} ${styles.statItemFlex}`}>
-                                <div className={styles.statItemRight}>
-                                    <div className={styles.statValue}>{userInfo ? userInfo[1].toString() : "..."}</div>
-                                    <div className={styles.statLabel}>Friends</div>
-                                </div>
-                                {/* <img className={styles.statButton} src={addFriends} alt="" /> */}
-                            </div>
+    return (<>
+        {chainId == ARBITRUM_SEPOLIA_CHAIN_ID ?
 
-                            <div className={`${styles.statItem} ${styles.statItemFlex}`}>
-                                <div className={styles.statItemRight}>
-                                    <div className={styles.statValue}>{userInfo ? userInfo[2].toString() : "..."}</div>
-                                    <div className={styles.statLabel}>Reputation</div>
+            (< div className={styles.container} >
+                <div className={styles.profileCard}>
+                    <div className={styles.profileHeader}>
+                        <img src={peerLinkLogo} alt="Profile" className={styles.profileImg} />
+                        <h1 className={styles.profileName}>{userInfo ? userInfo[0][0] : "Loading"}</h1>
+                        <p className={styles.profileBio}>{userInfo ? userInfo[0][1] : "Loading"}</p>
+                    </div>
+                    {activeSubScreen == "Home" ?
+                        <div className={styles.profileBody}>
+                            <div className={styles.statsContainer}>
+                                <div className={`${styles.statItem} ${styles.statItemFlex}`}>
+                                    <div className={styles.statItemRight}>
+                                        <div className={styles.statValue}>{userInfo ? userInfo[1].toString() : "..."}</div>
+                                        <div className={styles.statLabel}>Friends</div>
+                                    </div>
+                                    {/* <img className={styles.statButton} src={addFriends} alt="" /> */}
                                 </div>
-                                <img className={styles.statButton} src={increaseReputation} onClick={onIncreaseReputation} />
-                            </div>
 
-                            <div className={`${styles.statItem} ${styles.statItemFlex}`}>
-                                <div className={styles.statItemRight}>
-                                    <div className={styles.statValue}>{userInfo ? userInfo[3].length : "..."}</div>
-                                    <div className={styles.statLabel}>Milestone NFTs</div>
+                                <div className={`${styles.statItem} ${styles.statItemFlex}`}>
+                                    <div className={styles.statItemRight}>
+                                        <div className={styles.statValue}>{userInfo ? userInfo[2].toString() : "..."}</div>
+                                        <div className={styles.statLabel}>Reputation</div>
+                                    </div>
+                                    <img className={styles.statButton} src={increaseReputation} onClick={onIncreaseReputation} />
                                 </div>
-                                {/* <img className={styles.statButton} src={viewAll} alt="" /> */}
+
+                                <div className={`${styles.statItem} ${styles.statItemFlex}`}>
+                                    <div className={styles.statItemRight}>
+                                        <div className={styles.statValue}>{userInfo ? userInfo[3].length : "..."}</div>
+                                        <div className={styles.statLabel}>Milestone NFTs</div>
+                                    </div>
+                                    {/* <img className={styles.statButton} src={viewAll} alt="" /> */}
+                                </div>
                             </div>
-                        </div>
-                        <div className={styles.credBalance}>
-                            <div className={styles.credInfo}>
-                                <strong>{credBalance ? credBalance.toString() : "Loading"}</strong> CRED
-                                <img className={styles.credCoin} src={credCoin} alt="CRED coin" />
-                            </div>
-                            {/* {rewardsInfo && (
+                            <div className={styles.credBalance}>
+                                <div className={styles.credInfo}>
+                                    <strong>{credBalance ? credBalance.toString() : "Loading"}</strong> CRED
+                                    <img className={styles.credCoin} src={credCoin} alt="CRED coin" />
+                                </div>
+                                {/* {rewardsInfo && (
                                 <>
                                     <strong>Next Reward In: </strong>
                                     <div className={styles.countdownContainer}>
@@ -145,38 +148,40 @@ const HomePage = () => {
                                     </div>
                                 </>
                             )} */}
-                            <button onClick={() => handleSubScreenChange("Rewards")}>View Rewards Stats</button>
+                                <button onClick={() => handleSubScreenChange("Rewards")}>View Rewards Stats</button>
+                            </div>
                         </div>
+                        : <RewardPage handleStateChange={setActiveSubScreen} />}
+                    <div className={styles.buttonContainer}>
+                        <button
+                            className={`${styles.firstOption} ${styles.optionsBtn} ${activeButton === 'home' ? styles.active : ''}`}
+                            onClick={() => handleButtonClick('home')}
+                        >
+                            Home
+                        </button>
+                        <button
+                            className={`${styles.optionsBtn} ${activeButton === 'friends' ? styles.active : ''}`}
+                            onClick={() => handleButtonClick('friends')}
+                        >
+                            Friends
+                        </button>
+                        <button
+                            className={`${styles.optionsBtn} ${activeButton === 'groups' ? styles.active : ''}`}
+                            onClick={() => handleButtonClick('groups')}
+                        >
+                            Groups
+                        </button>
+                        <button
+                            className={`${styles.lastOption} ${styles.optionsBtn} ${activeButton === 'tokens' ? styles.active : ''}`}
+                            onClick={() => handleButtonClick('tokens')}
+                        >
+                            Tokens
+                        </button>
                     </div>
-                    : <RewardPage handleStateChange={setActiveSubScreen} />}
-                <div className={styles.buttonContainer}>
-                    <button
-                        className={`${styles.firstOption} ${styles.optionsBtn} ${activeButton === 'home' ? styles.active : ''}`}
-                        onClick={() => handleButtonClick('home')}
-                    >
-                        Home
-                    </button>
-                    <button
-                        className={`${styles.optionsBtn} ${activeButton === 'friends' ? styles.active : ''}`}
-                        onClick={() => handleButtonClick('friends')}
-                    >
-                        Friends
-                    </button>
-                    <button
-                        className={`${styles.optionsBtn} ${activeButton === 'groups' ? styles.active : ''}`}
-                        onClick={() => handleButtonClick('groups')}
-                    >
-                        Groups
-                    </button>
-                    <button
-                        className={`${styles.lastOption} ${styles.optionsBtn} ${activeButton === 'tokens' ? styles.active : ''}`}
-                        onClick={() => handleButtonClick('tokens')}
-                    >
-                        Tokens
-                    </button>
                 </div>
-            </div>
-        </div>
+            </div >) : <SwitchNetworks chainId={chainId} />
+        }
+    </>
     );
 };
 
