@@ -19,7 +19,7 @@ interface FriendRequest {
 }
 
 interface FriendRequestsProps {
-    onStateChange: () => void;
+    onStateChange: (newState: string) => void; // Updated to accept a string
 }
 
 
@@ -153,7 +153,7 @@ const FriendRequests: React.FC<FriendRequestsProps> = ({ onStateChange }) => {
             <h2>Friend Requests</h2>
             <div className={styles.backButton}>
                 <img
-                    onClick={() => onStateChange()}
+                    onClick={() => onStateChange("Friends")}
                     className={styles.backButton}
                     src={back}
                     alt="back-button"
