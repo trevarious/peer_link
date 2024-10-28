@@ -15,7 +15,12 @@ interface Web3ContextProps {
     connectionStatus: boolean;
     isLoading: boolean;
     web3: Web3 | null;
+    cred: any;
     peerLink: any;
+    peerChat: any;
+    peerGroup: any;
+    peerFlexNFT: any;
+    peerRewards: any
     credAddress: string | null;
     credInfo: any;
     userAccountStatus: any;
@@ -38,17 +43,27 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [credInfo, setCredInfo] = useState<any>({});
     const [peerSystemContracts, setPeerSystemContracts] = useState<any>({});
 
-    const initializeContracts = useCallback((web3Instance: Web3, chainId: string) => {
+    const initializeContracts = useCallback(async (web3Instance: Web3, chainId: string) => {
         if (chainId === ARBITRUM_SEPOLIA_CHAIN_ID) {
-            const contracts = {
-                peerLink: new web3Instance.eth.Contract(peerSystemAbi.peerLinkAbi, peerSystemAddress.peerLinkAddress),
-                cred: new web3Instance.eth.Contract(peerSystemAbi.credAbi, peerSystemAddress.credAddress),
-                peerChat: new web3Instance.eth.Contract(peerSystemAbi.peerChatAbi, peerSystemAddress.peerChatAddress),
-                peerGroups: new web3Instance.eth.Contract(peerSystemAbi.peerGroupAbi, peerSystemAddress.peerGroupAddress),
-                peerRewards: new web3Instance.eth.Contract(peerSystemAbi.peerRewardsAbi, peerSystemAddress.peerRewardsAddress),
-                peerFlexNFTs: new web3Instance.eth.Contract(peerSystemAbi.peerFlexNFTAbi, peerSystemAddress.peerFlexNFTAddress),
-            };
-            setPeerSystemContracts(contracts);
+            try {
+                const contracts = {
+                    peerLink: new web3Instance.eth.Contract(peerSystemAbi.peerLinkAbi, peerSystemAddress.peerLinkAddress),
+                    cred: new web3Instance.eth.Contract(peerSystemAbi.credAbi, peerSystemAddress.credAddress),
+                    peerChat: new web3Instance.eth.Contract(peerSystemAbi.peerChatAbi, peerSystemAddress.peerChatAddress),
+                    peerGroups: new web3Instance.eth.Contract(peerSystemAbi.peerGroupAbi, peerSystemAddress.peerGroupAddress),
+                    peerRewards: new web3Instance.eth.Contract(peerSystemAbi.peerRewardsAbi, peerSystemAddress.peerRewardsAddress),
+                    peerFlexNFTs: new web3Instance.eth.Contract(peerSystemAbi.peerFlexNFTAbi, peerSystemAddress.peerFlexNFTAddress),
+                };
+
+                // Await all contract creations
+                await Promise.all(Object.values(contracts));
+                console.log("Contracts Initialized");
+
+                setPeerSystemContracts(contracts);
+            } catch (error) {
+                console.error("Error initializing contracts:", error);
+                setPeerSystemContracts({});
+            }
         } else {
             setPeerSystemContracts({});
         }

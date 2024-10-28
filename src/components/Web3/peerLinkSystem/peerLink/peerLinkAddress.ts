@@ -1,2 +1,2 @@
-const peerLinkAddress = '0xF72D9e6dd68cDe3800364A59D6284EfFcaa2676b';
+const peerLinkAddress = '0xd664e7130f40C4a972036Ac98fe82243182F158d';
 export default peerLinkAddress;

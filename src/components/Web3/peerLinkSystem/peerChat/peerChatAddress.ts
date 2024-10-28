@@ -1,3 +1,3 @@
-const peerChatAddress = '0x06CbFc3509F0d495270D2ACb947877164a69Cd0E'
+const peerChatAddress = '0x90D8DBc7D17F478090b211900a07e4B83A05d880'
 
 export default peerChatAddress

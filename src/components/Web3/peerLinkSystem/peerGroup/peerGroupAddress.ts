@@ -1,3 +1,3 @@
-const peerGroupAddress = '0x9474155445b0F7D5452fbAbd55714cD2CefD6961'
+const peerGroupAddress = '0xdd23EDA1b0eCf79933d65265640d83cDBC917bCd'
 
 export default peerGroupAddress

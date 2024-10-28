@@ -1,163 +1,155 @@
-; import { useState } from "react";
-// import { usePeerLinkContext } from "../appContext/peerLinkContext/PeerLinkContext";
+import { useState } from "react";
 import { useWeb3 } from "../Web3/Web3";
-import styles from "./SSignUp.module.css"
-// import Web3 from "web3";
-// const squareContainer = document.getElementById('squareContainer');
+import styles from "./SSignUp.module.css";
+import confetti from 'canvas-confetti';
+
 const SSignUp = () => {
     const [bioInput, setBioInput] = useState('');
     const [usernameInput, setUsernameInput] = useState('');
     const [walletAddressInput, setWalletAddressInput] = useState('');
+    const [isTransitioning, setIsTransitioning] = useState(false);
     const { userAccount, peerLink } = useWeb3();
-    // const { userStatus } = usePeerLinkContext();
-    // const [doesAccountExist, setDoesAccountExist] = useState<any>(null);
 
-    // const checkUserStatus = async () => {
-    //     if (userAccount && peerLink) {
-    //         const response = await peerLink.methods.checkAccountStatus(userAccount.address).call();
-    //         setDoesAccountExist(response);
-    //         console.log(response);
+    const fireConfetti = () => {
+        const duration = 3000;
+        const end = Date.now() + duration;
 
-    //     }
-    // }
-    const handleTestMint = async () => {
-        if (userAccount && peerLink) {
-            try {
-                const response = await peerLink.methods.mintUser(userAccount.address, "bob", "Trader").send({ from: userAccount.address });
-                if (response) {
-                    console.log("Successful");
-                } else {
-                    console.log("Unsuccessful");
-                }
-
-
-            } catch (err) {
-                console.log("error in test mint funciton");
-                console.log(err);
+        const interval = setInterval(() => {
+            if (Date.now() > end) {
+                return clearInterval(interval);
             }
-        } else {
-            console.log("Issues connecting to provider");
-        }
-    }
 
+            confetti({
+                particleCount: 200,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#00ff00', '#0099ff']
+            });
+            confetti({
+                particleCount: 200,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#00ff00', '#0099ff']
+            });
+        }, 50);
+    };
 
-    const handleSubmit = async (e: any) => {
-        if (userAccount) {
-            e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-            if (usernameInput.length < 1 || bioInput.length < 1) {
-                alert("You must fill out all fields.");
-                return;
-            }
-            console.log("WalletAddressInput");
-            console.log(walletAddressInput);
-            console.log("UserAccount.Address");
-            console.log(userAccount.address);
-            if (walletAddressInput.toLowerCase() != userAccount.address.toLowerCase()) {
-                alert("Address field does not match the connected acount");
-                return;
-            }
-            if (userAccount && peerLink) {
-                // ...existing validation...
-                try {
-                    await peerLink.methods.mintUser(userAccount.address, usernameInput.toString(), bioInput.toString()).send({ from: userAccount.address });
-                } catch (err) {
-                    console.log("errrrrr", err);
-                }
-            }
+        if (!userAccount) return;
+
+        if (usernameInput.trim() === '' || bioInput.trim() === '') {
+            alert("You must fill out all fields.");
+            return;
         }
 
-    }
+        if (walletAddressInput.toLowerCase() !== userAccount.address.toLowerCase()) {
+            alert("Address field does not match the connected account");
+            return;
+        }
 
-    const handleUsernameInputChange = (e: any) => {
-        setUsernameInput(e.target.value);
+        try {
+            // Start the loading/transition state
+            setIsTransitioning(true);
+
+            // Mint the user profile
+            await peerLink.methods.mintUser(
+                userAccount.address,
+                usernameInput,
+                bioInput
+            ).send({ from: userAccount.address });
+
+            // Trigger confetti
+            fireConfetti();
+
+            // After confetti, trigger the fade out animation
+            setTimeout(() => {
+                // The parent component will handle the actual page change
+                if (typeof window !== 'undefined') {
+                    // Force a re-check of the account status
+                    window.location.reload();
+                }
+            }, 8000); // Wait for confetti to finish
+
+        } catch (err) {
+            console.log("Error:", err);
+            setIsTransitioning(false);
+        }
     }
-    const handleBioInputChange = (e: any) => {
-        setBioInput(e.target.value);
-    }
-    const handleWalletAddressChange = (e: any) => {
-        setWalletAddressInput(e.target.value);
-    }
-    // useEffect(() => {
-    //     checkUserStatus();
-    // }, [peerLink, userAccount]);
 
     return (
-        <>
-            <div className={styles.decorativeSquare1}></div>
-            <div className={styles.decorativeSquare2}></div>
-            <div className={styles.decorativeSquare3}></div>
-            <div className={styles.decorativeSquare4}></div>
-            <div className={styles.decorativeSquare5}></div>
-            <div className={styles.decorativeSquare6}></div>
-            <div className={styles.decorativeSquare7}></div>
-            <div className={styles.decorativeSquare8}></div>
+        <div className={`${styles.pageWrapper} ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-1000`}>
             <div className={styles.container}>
+                <div className={styles.headerSection}>
+                    <h1 className={styles.mainTitle}>What is PeerLink?</h1>
+                    <p className={styles.headerDescription}>
+                        PeerLink is a decentralized social protocol where your reputation, friendships, and interactions are tokenized on-chain. Connect with others, earn rewards for participating, and build your Web3 identity through NFTs and reputation scores.
+                    </p>
+                </div>
 
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    <fieldset className={styles.fieldSet}>
-                        <legend className={styles.title}>Create Account</legend>
-                        <label htmlFor="wallet-address" className={styles.label}>
-                            Wallet Address:
-                        </label>
-                        <input
-                            id="wallet-address"
-                            name="wallet-address"
-                            type="text"
-                            value={walletAddressInput}
-                            onChange={handleWalletAddressChange}
-                            placeholder="0x"
-                            className={styles.input}
-                        />
-                        {/* <p className={styles.helpText} id="usernameHelp">
-                        Must match connect wallet address
-                    </p> */}
-                    </fieldset>
+                    <div className={styles.formHeader}>
+                        <h2 className={styles.title}>Create Account</h2>
+                        <p className={styles.description}>Your information is stored on-chain</p>
+                    </div>
 
-                    <fieldset className={styles.fieldSet}>
-                        <legend >Create A Name</legend>
-                        <label htmlFor="username" className={styles.label}>
-                            Username:
-                        </label>
-                        <input
-                            id="username"
-                            name="username"
-                            type="text"
-                            value={usernameInput}
-                            onChange={handleUsernameInputChange}
-                            placeholder="ex. Satoshi Buterin"
-                            className={styles.input}
-                        />
-                        {/* <p className={styles.helpText} id="usernameHelp">
-                        Choose a unique name
-                    </p> */}
-                    </fieldset>
+                    <div className={styles.fieldsContainer}>
+                        <fieldset className={styles.fieldSet}>
+                            <label htmlFor="wallet-address" className={styles.label}>
+                                Wallet Address
+                            </label>
+                            <input
+                                id="wallet-address"
+                                type="text"
+                                value={walletAddressInput}
+                                onChange={(e) => setWalletAddressInput(e.target.value)}
+                                placeholder="0x"
+                                className={styles.input}
+                            />
+                        </fieldset>
 
-                    <fieldset className={styles.fieldSet}>
-                        <legend>About You</legend>
-                        <label htmlFor="bio" className={styles.label}>
-                            Bio:
-                        </label>
-                        <textarea
-                            id="bio"
-                            name="bio"
-                            value={bioInput}
-                            onChange={handleBioInputChange}
-                            placeholder="Share your story"
-                            className={styles.textarea}
-                        ></textarea>
-                        {/* <p className={styles.helpText} id="bioHelp">
-                        Share a bit about yourself!
-                    </p> */}
-                    </fieldset>
+                        <fieldset className={styles.fieldSet}>
+                            <label htmlFor="username" className={styles.label}>
+                                Username
+                            </label>
+                            <input
+                                id="username"
+                                type="text"
+                                value={usernameInput}
+                                onChange={(e) => setUsernameInput(e.target.value)}
+                                placeholder="ex. Satoshi Buterin"
+                                className={styles.input}
+                            />
+                        </fieldset>
 
-                    <button type="submit" className={styles.button}>
-                        Mint Your Profile
+                        <fieldset className={styles.fieldSet}>
+                            <label htmlFor="bio" className={styles.label}>
+                                Bio
+                            </label>
+                            <textarea
+                                id="bio"
+                                value={bioInput}
+                                onChange={(e) => setBioInput(e.target.value)}
+                                placeholder="Share your story"
+                                className={styles.textarea}
+                            />
+                        </fieldset>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className={`${styles.button} ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={isTransitioning}
+                    >
+                        {isTransitioning ? 'Creating Profile...' : 'Mint Your Profile'}
                     </button>
                 </form>
-                <button onClick={handleTestMint}>Test Mint Function</button>
             </div>
-        </>
-    )
+        </div>
+    );
 }
+
 export default SSignUp;

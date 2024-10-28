@@ -10,7 +10,7 @@ const Dashboard = () => {
         if (userAccount && peerLink) {
             const response = await peerLink.methods.checkAccountStatus(userAccount.address).call();
             setHasAccount(response);
-            console.log(response);
+            console.log("Response from checkUserStatus(): ", response);
 
         }
     }
