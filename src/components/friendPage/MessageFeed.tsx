@@ -3,14 +3,32 @@ import { useWeb3 } from "../Web3/Web3";
 import { Send, ArrowLeft, Wallet, Receipt } from 'lucide-react';
 import styles from './MessageFeed.module.css';
 
-const MessageFeed = ({ friendAddress, friendName, onBack }) => {
+interface Message {
+    sender: string;
+    senderName: string;
+    content: string;
+    timestamp: number;
+    messageType: number; // Assuming messageType is a number
+    paymentInfo?: {
+        amount: string; // Amount in wei
+        memo?: string; // Optional memo
+    };
+}
+
+interface MessageFeedProps {
+    friendAddress: string; // Assuming it's a string
+    friendName: string; // Assuming it's a string
+    onBack: () => void;
+}
+
+const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, onBack }) => {
     const { userAccount, peerSystemContracts, web3 } = useWeb3();
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
     const [paymentMemo, setPaymentMemo] = useState('');
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,7 +50,6 @@ const MessageFeed = ({ friendAddress, friendName, onBack }) => {
 
     useEffect(() => {
         fetchMessages();
-        // Poll for new messages every 10 seconds
         const interval = setInterval(fetchMessages, 10000);
         return () => clearInterval(interval);
     }, [friendAddress, peerSystemContracts, userAccount]);
@@ -41,9 +58,9 @@ const MessageFeed = ({ friendAddress, friendName, onBack }) => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSendMessage = async (e) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || !peerSystemContracts?.peerChat) return;
+        if (!newMessage.trim() || !peerSystemContracts?.peerChat || userAccount == null) return;
 
         try {
             await peerSystemContracts.peerChat.methods
@@ -56,12 +73,12 @@ const MessageFeed = ({ friendAddress, friendName, onBack }) => {
         }
     };
 
-    const handleSendPayment = async (e) => {
+    const handleSendPayment = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!paymentAmount || !peerSystemContracts?.peerChat) return;
+        if (!paymentAmount || !peerSystemContracts?.peerChat || userAccount == null) return;
 
         try {
-            const amountInWei = web3.utils.toWei(paymentAmount, 'ether');
+            const amountInWei = web3?.utils.toWei(paymentAmount, 'ether');
             const message = `Sent ${paymentAmount} ETH`;
 
             await peerSystemContracts.peerChat.methods
@@ -80,10 +97,9 @@ const MessageFeed = ({ friendAddress, friendName, onBack }) => {
         }
     };
 
-    const renderMessage = (message, index) => {
+    const renderMessage = (message: Message, index: number) => {
         const isOwnMessage = message.sender.toLowerCase() === userAccount?.address.toLowerCase();
-        const isPayment = message.messageType.toString() === '1'; // PAYMENT type from enum
-        console.log("Message Type: ", message.messageType);
+        const isPayment = message.messageType === 1; // PAYMENT type from enum
 
         return (
             <div
@@ -91,23 +107,22 @@ const MessageFeed = ({ friendAddress, friendName, onBack }) => {
                 className={`${styles.messageGroup} ${isOwnMessage ? styles.sent : styles.received}`}
             >
                 <div
-                    className={`${styles.messageBubble} ${isOwnMessage ? styles.sent : styles.received
-                        } ${isPayment ? styles.payment : ''}`}
+                    className={`${styles.messageBubble} ${isOwnMessage ? styles.sent : styles.received} ${isPayment ? styles.payment : ''}`}
                 >
                     {!isOwnMessage && (
                         <p className={styles.senderName}>{message.senderName}</p>
                     )}
 
-                    {isPayment ? (
+                    {isPayment && message.paymentInfo ? (
                         <div className={styles.paymentInfo}>
                             <div className={styles.paymentHeader}>
                                 <Receipt size={16} />
                                 <span>Payment {isOwnMessage ? "Sent" : "Received"}</span>
                             </div>
                             <p className={styles.paymentAmount}>
-                                {web3.utils.fromWei(message.paymentInfo.amount, 'ether')} ETH
+                                {web3?.utils.fromWei(message.paymentInfo.amount, 'ether')} ETH
                             </p>
-                            {message.paymentInfo.memo && (
+                            {message.paymentInfo?.memo && (
                                 <div className={styles.paymentMemoContainer}>
                                     <p className={styles.paymentMemoLabel}>Memo</p>
                                     <p className={styles.paymentMemo}>"{message.paymentInfo.memo}"</p>

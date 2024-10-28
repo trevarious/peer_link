@@ -2,53 +2,58 @@ import React, { useState } from "react";
 import BackButton from "../../assets/back-button.png";
 import { useWeb3 } from "../Web3/Web3";
 import styles from "./SendFriendRequest.module.css";
-import confetti from 'canvas-confetti';
+// import confetti from ';
 import { SendIcon, Check, Loader2, AlertCircle } from "lucide-react";
 
-const SendFriendRequest = ({ onStateChange }) => {
-    const [walletAddressInput, setWalletAddressInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [error, setError] = useState('');
+// Define props interface
+interface SendFriendRequestProps {
+    onStateChange: (state: string) => void;
+}
+
+const SendFriendRequest: React.FC<SendFriendRequestProps> = ({ onStateChange }) => {
+    const [walletAddressInput, setWalletAddressInput] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showSuccess, setShowSuccess] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
     const { userAccount, peerLink } = useWeb3();
 
-    const fireConfetti = () => {
-        const count = 200;
-        const defaults = {
-            origin: { y: 0.7 },
-            spread: 50,
-        };
+    // const fireConfetti = () => {
+    //     const count = 200;
+    //     const defaults = {
+    //         origin: { y: 0.7 },
+    //         spread: 50,
+    //     };
 
-        function fire(particleRatio, opts) {
-            confetti({
-                ...defaults,
-                ...opts,
-                particleCount: Math.floor(count * particleRatio),
-                scalar: 1.2,
-            });
-        }
+    //     function fire(particleRatio: number, opts: any) {
+    //         // confetti({
+    //         //     ...defaults,
+    //         //     ...opts,
+    //         //     particleCount: Math.floor(count * particleRatio),
+    //         //     scalar: 1.2,
+    //         // });
+    //     }
 
-        fire(0.25, {
-            spread: 26,
-            startVelocity: 55,
-            origin: { x: 0.2, y: 0.7 }
-        });
+    //     fire(0.25, {
+    //         spread: 26,
+    //         startVelocity: 55,
+    //         origin: { x: 0.2, y: 0.7 }
+    //     });
 
-        fire(0.2, {
-            spread: 60,
-            origin: { x: 0.8, y: 0.7 }
-        });
+    //     fire(0.2, {
+    //         spread: 60,
+    //         origin: { x: 0.8, y: 0.7 }
+    //     });
 
-        fire(0.35, {
-            spread: 100,
-            decay: 0.91,
-            origin: { x: 0.5, y: 0.7 }
-        });
-    };
+    //     fire(0.35, {
+    //         spread: 100,
+    //         decay: 0.91,
+    //         origin: { x: 0.5, y: 0.7 }
+    //     });
+    // };
 
     const showSuccessState = () => {
         setShowSuccess(true);
-        fireConfetti();
+        // fireConfetti();
 
         // Reset after animation
         setTimeout(() => {
@@ -58,12 +63,12 @@ const SendFriendRequest = ({ onStateChange }) => {
         }, 10000);
     };
 
-    const handleWalletAddressChange = (e) => {
+    const handleWalletAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setWalletAddressInput(e.target.value);
         setError(''); // Clear any existing errors when input changes
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!userAccount || !peerLink) {
             setError('Wallet not connected');
@@ -96,17 +101,17 @@ const SendFriendRequest = ({ onStateChange }) => {
             await peerLink.methods
                 .sendFriendRequest(toAddress)
                 .send({ from: userAccount.address })
-                .on('transactionHash', (hash) => {
+                .on('transactionHash', (hash: string) => {
                     console.log('Transaction Hash:', hash);
                 })
-                .on('receipt', (receipt) => {
+                .on('receipt', (receipt: any) => {
                     console.log('Transaction Receipt:', receipt);
                     showSuccessState();
                 })
-                .on('error', (error) => {
+                .on('error', (error: any) => {
                     throw error;
                 });
-        } catch (err) {
+        } catch (err: any) {
             console.error("Error sending friend request:", err);
             setError(err.message.includes('User denied')
                 ? 'Transaction was rejected'

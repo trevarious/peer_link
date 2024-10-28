@@ -3,10 +3,10 @@ import { useWeb3 } from "../Web3/Web3";
 import styles from './HomePage.module.css';
 import FriendPage from "../friendPage/FriendPage"
 import peerLinkLogo from "../../assets/peer-link-logo-nobg-big.png";
-import { CredToken } from "../svgs/CredSvg"
-import credCoin from "../../assets/cred-erc.png";
+// import { CredToken } from "../svgs/CredSvg"
+// import credCoin from "../../assets/cred-erc.png";
 // import addFriends from "../../assets/add-friend.png";
-import increaseReputation from "../../assets/increase-reputation.png";
+// import increaseReputation from "../../assets/increase-reputation.png";
 // import viewAll from "../../assets/view-all.png";
 // import dailyReward from "../../assets/daily-rewards.png";
 // import dailyReward_notReady from "../../assets/daily-rewards_not_ready.png";
@@ -24,7 +24,7 @@ const HomePage = () => {
     const [activeSubScreen, setActiveSubScreen] = useState<any>('Home');
     const [countdown, setCountdown] = useState('');
     const { web3, userAccount, peerLink, peerSystemContracts, chainId } = useWeb3();
-    const [content, setContent] = useState<any>(null);
+    // const [content, setContent] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<any>(false);
     const [costToIncreaseReputation, setCostToIncreaseReputation] = useState<any>(0);
 
@@ -101,7 +101,7 @@ const HomePage = () => {
             await peerLink.methods.increaseReputation().send({ from: userAccount.address });
         }
     };
-    const depositETH = async (amount) => {
+    const depositETH = async (amount: any) => {
         if (userAccount && peerLink && web3) {
             try {
                 await peerLink.methods.depositETH().send({ from: userAccount.address, value: web3.utils.toWei(amount, "ether") });
@@ -112,7 +112,7 @@ const HomePage = () => {
             }
         }
     }
-    const withdrawETH = async (amount) => {
+    const withdrawETH = async (amount: any) => {
         if (userAccount && peerLink && web3) {
             try {
                 await peerLink.methods.withdrawETH(web3.utils.toWei(amount, "ether")).send({ from: userAccount.address });
@@ -123,26 +123,26 @@ const HomePage = () => {
             }
         }
     }
-    const handleStateChange = (newState) => {
-        setIsLoading(true);
-        setActiveSubScreen(newState);
-    }
-    const getContent = () => {
-        switch (activeSubScreen) {
-            case "Home":
-                return < HomeContent />;
-            case "Rewards":
-                return < RewardsContent />;
-            case "Friends":
-                return < Friends />
-            default:
-                return null;
-        }
-    }
+    // const handleStateChange = (newState: any) => {
+    //     setIsLoading(true);
+    //     setActiveSubScreen(newState);
+    // }
+    // const getContent = () => {
+    //     switch (activeSubScreen) {
+    //         case "Home":
+    //             return < HomeContent />;
+    //         case "Rewards":
+    //             return < RewardsContent />;
+    //         case "Friends":
+    //             return < Friends />
+    //         default:
+    //             return null;
+    //     }
+    // }
     useEffect(() => {
         if (isLoading) {
             const timer = setTimeout(() => {
-                setContent(getContent());
+                // setContent(getContent());
                 setIsLoading(false);
 
             }, 500); // Adjust this delay as needed

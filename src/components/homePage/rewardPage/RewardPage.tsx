@@ -40,8 +40,8 @@ const RewardPage: React.FC<RewardPageProps> = ({ handleStateChange }) => {
                     console.log("response from getTimeUntilNextClaim");
                     console.log(response);
                 } catch (err) {
-                    console.log("ERror getting time until next calim");
-                    console.log(err.message);
+                    console.log("Error getting time until next calim");
+                    console.log(err);
                 }
             }
         }
@@ -125,7 +125,7 @@ const RewardPage: React.FC<RewardPageProps> = ({ handleStateChange }) => {
     };
 
 
-    const formatDate = (time) => {
+    const formatDate = (time: any) => {
         if (!time) return '';
 
         const currentTime = new Date();
@@ -181,7 +181,7 @@ const RewardPage: React.FC<RewardPageProps> = ({ handleStateChange }) => {
         if (peerSystemContracts) {
             if (peerSystemContracts.peerRewards) {
                 getRewardsInfo();
-                formatDate();
+                formatDate(rewardsInfo);
                 getTimeUntilNextClaim();
             }
         }

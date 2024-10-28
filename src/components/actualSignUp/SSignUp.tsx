@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWeb3 } from "../Web3/Web3";
 import styles from "./SSignUp.module.css";
-import confetti from 'canvas-confetti';
+// import confetti from 'canvas-confetti';
 
 const SSignUp = () => {
     const [bioInput, setBioInput] = useState('');
@@ -19,24 +19,24 @@ const SSignUp = () => {
                 return clearInterval(interval);
             }
 
-            confetti({
-                particleCount: 200,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: ['#00ff00', '#0099ff']
-            });
-            confetti({
-                particleCount: 200,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: ['#00ff00', '#0099ff']
-            });
+            // confetti({
+            //     particleCount: 200,
+            //     angle: 60,
+            //     spread: 55,
+            //     origin: { x: 0 },
+            //     colors: ['#00ff00', '#0099ff']
+            // });
+            // confetti({
+            //     particleCount: 200,
+            //     angle: 120,
+            //     spread: 55,
+            //     origin: { x: 1 },
+            //     colors: ['#00ff00', '#0099ff']
+            // });
         }, 50);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
 
         if (!userAccount) return;

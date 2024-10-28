@@ -4,7 +4,7 @@ import accepted from "../../assets/accepted.png";
 import denied from "../../assets/denied.png";
 import back from "../../assets/back-button.png";
 import { useWeb3 } from "../Web3/Web3";
-import confetti from 'canvas-confetti';
+// import confetti from 'canvas-confetti';
 
 // Update the interface to match the actual response structure
 interface FriendRequest {
@@ -26,46 +26,46 @@ interface FriendRequestsProps {
 const FriendRequests: React.FC<FriendRequestsProps> = ({ onStateChange }) => {
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
     const { userAccount, peerLink } = useWeb3();
-    const [showSuccess, setShowSuccess] = useState<any>(false);
+    const [setShowSuccess] = useState<any>(false);
 
-    const fireConfetti = () => {
-        const count = 200;
-        const defaults = {
-            origin: { y: 0.7 },
-            spread: 50,
-        };
+    // const fireConfetti = () => {
+    //     const count = 200;
+    //     const defaults = {
+    //         origin: { y: 0.7 },
+    //         spread: 50,
+    //     };
 
-        function fire(particleRatio, opts) {
-            confetti({
-                ...defaults,
-                ...opts,
-                particleCount: Math.floor(count * particleRatio),
-                scalar: 1.2,
-            });
-        }
+    //     function fire(particleRatio: any, opts: any) {
+    //         // confetti({
+    //         //     ...defaults,
+    //         //     ...opts,
+    //         //     particleCount: Math.floor(count * particleRatio),
+    //         //     scalar: 1.2,
+    //         // });
+    //     }
 
-        fire(0.25, {
-            spread: 26,
-            startVelocity: 55,
-            origin: { x: 0.2, y: 0.7 }
-        });
+    //     fire(0.25, {
+    //         spread: 26,
+    //         startVelocity: 55,
+    //         origin: { x: 0.2, y: 0.7 }
+    //     });
 
-        fire(0.2, {
-            spread: 60,
-            origin: { x: 0.8, y: 0.7 }
-        });
+    //     fire(0.2, {
+    //         spread: 60,
+    //         origin: { x: 0.8, y: 0.7 }
+    //     });
 
-        fire(0.35, {
-            spread: 100,
-            decay: 0.91,
-            origin: { x: 0.5, y: 0.7 }
-        });
-    };
+    //     fire(0.35, {
+    //         spread: 100,
+    //         decay: 0.91,
+    //         origin: { x: 0.5, y: 0.7 }
+    //     });
+    // };
 
 
     const showSuccessState = () => {
         setShowSuccess(true);
-        fireConfetti();
+        // fireConfetti();
 
         // Reset after animation
         setTimeout(() => {
@@ -74,9 +74,9 @@ const FriendRequests: React.FC<FriendRequestsProps> = ({ onStateChange }) => {
     };
 
 
-    const handleAcceptFriendShip = async (fromAddress) => {
+    const handleAcceptFriendShip = async (fromAddress: any) => {
         if (peerLink && userAccount) {
-            await peerLink.methods.handleFriendRequest(fromAddress, true).send({ from: userAccount.address }).on('receipt', (receipt) => {
+            await peerLink.methods.handleFriendRequest(fromAddress, true).send({ from: userAccount.address }).on('receipt', (receipt: any) => {
                 console.log("receipt from handling friend request", receipt);
                 showSuccessState();
             })
@@ -153,7 +153,7 @@ const FriendRequests: React.FC<FriendRequestsProps> = ({ onStateChange }) => {
             <h2>Friend Requests</h2>
             <div className={styles.backButton}>
                 <img
-                    onClick={() => onStateChange("Rewards")}
+                    onClick={() => onStateChange()}
                     className={styles.backButton}
                     src={back}
                     alt="back-button"

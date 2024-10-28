@@ -5,40 +5,32 @@ import Web3 from 'web3';
 
 const ARBITRUM_SEPOLIA_CHAIN_ID = '0x66eee';
 
-interface UserAccountState {
-    address: string;
-}
 
 interface Web3ContextProps {
-    userAccount: UserAccountState | null;
-    error: string | null;
-    connectionStatus: boolean;
-    isLoading: boolean;
-    web3: Web3 | null;
-    cred: any;
+    userAccount: any;
+    error: any;
+    connectionStatus: any;
+    isLoading: any;
+    web3: any;
     peerLink: any;
-    peerChat: any;
-    peerGroup: any;
-    peerFlexNFT: any;
-    peerRewards: any
-    credAddress: string | null;
+    credAddress: any;
     credInfo: any;
     userAccountStatus: any;
     peerSystemContracts: any;
     chainId: any;
-    reinitWeb3: (chain: string) => any;
+    reinitWeb3: (chain: any) => any;
 }
 
 const Web3Context = createContext<Web3ContextProps | undefined>(undefined);
 
 export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [chainId, setChainId] = useState<string | null>(null);
-    const [userAccount, setUserAccount] = useState<UserAccountState | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [web3, setWeb3] = useState<Web3 | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [connectionStatus, setConnectionStatus] = useState<boolean>(false);
-    const [credAddress, setCredAddress] = useState<string | null>(null);
+    const [chainId, setChainId] = useState<any>(null);
+    const [userAccount, setUserAccount] = useState<any>(null);
+    const [error, setError] = useState<any>(null);
+    const [web3, setWeb3] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState<any>(false);
+    const [connectionStatus, setConnectionStatus] = useState<any>(false);
+    const [credAddress, setCredAddress] = useState<any>(null);
     const [userAccountStatus, setUserAccountStatus] = useState<any>(null);
     const [credInfo, setCredInfo] = useState<any>({});
     const [peerSystemContracts, setPeerSystemContracts] = useState<any>({});

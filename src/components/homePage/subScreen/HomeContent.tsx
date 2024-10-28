@@ -1,29 +1,51 @@
-import { useEffect, useState } from "react"
-import styles from "../HomePage.module.css"
-import increaseReputation from "../../../assets/increase-reputation.png"
-import credCoin from '../../../assets/cred-erc.png'
-import CredSvg from "../../svgs/CredSvg"
+import React, { useState } from "react";
+import styles from "../HomePage.module.css";
+import increaseReputation from "../../../assets/increase-reputation.png";
+import CredSvg from "../../svgs/CredSvg";
 
-const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onIncreaseReputation, handleSubScreenChange, depositETH, widthdrawETH, costToIncreaseReputation }) => {
+interface HomeContentProps {
+    web3: any; // Ideally, replace `any` with the specific type for web3
+    userAccount: any;
+    userInfo: any[] | null; // Adjust according to the structure of userInfo
+    credBalance: number | null;
+    ethBalance: string | null;
+    onIncreaseReputation: () => void;
+    handleSubScreenChange: (screen: string) => void;
+    depositETH: (amount: string) => Promise<void>;
+    widthdrawETH: (amount: string) => Promise<void>;
+    costToIncreaseReputation: number | string;
+}
+
+const HomeContent: React.FC<HomeContentProps> = ({
+    web3,
+    userInfo,
+    credBalance,
+    ethBalance,
+    onIncreaseReputation,
+    handleSubScreenChange,
+    depositETH,
+    widthdrawETH,
+    costToIncreaseReputation,
+}) => {
     const [showTooltip, setShowTooltip] = useState(false);
 
     const handleDepositClick = async () => {
-        let amount = prompt("Enter an amount:");
-        if (typeof (amount) != typeof ('number') || amount <= 0) {
-            alert("Please enter a numerical value");
+        const amount = prompt("Enter an amount:");
+        if (amount && !isNaN(Number(amount)) && Number(amount) > 0) {
+            await depositETH(amount);
         } else {
-            depositETH(amount);
+            alert("Please enter a valid numerical value.");
         }
-    }
+    };
 
     const handleWithdrawClick = async () => {
-        let amount = prompt("Enter an amount: ");
-        if (typeof (amount) != typeof ('number') || amount <= 0) {
-            alert("Please enter numerical value");
+        const amount = prompt("Enter an amount:");
+        if (amount && !isNaN(Number(amount)) && Number(amount) > 0) {
+            await widthdrawETH(amount);
         } else {
-            widthdrawETH(amount);
+            alert("Please enter a valid numerical value.");
         }
-    }
+    };
 
     return (
         <div className={styles.profileBody}>
@@ -48,6 +70,7 @@ const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onI
                     <img
                         className={`${styles.statButton} ${userInfo ? "" : styles.disabled}`}
                         src={increaseReputation}
+                        alt="Increase Reputation"
                         onClick={onIncreaseReputation}
                     />
                     <p className={`${styles.tooltip} ${showTooltip ? styles.visible : ''}`}>
@@ -57,7 +80,7 @@ const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onI
 
                 <div className={`${styles.statItem} ${styles.statItemFlex}`}>
                     <div className={styles.statItemRight}>
-                        <div className={styles.statValue}>{userInfo ? userInfo[3].length : "..."}</div>
+                        <div className={styles.statValue}>{userInfo ? userInfo[3]?.length : "..."}</div>
                         <div className={styles.statLabel}>Milestone NFTs</div>
                     </div>
                 </div>
@@ -72,7 +95,7 @@ const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onI
                         <div className={styles.leftSectionSub}>
                             <h3 className={styles.symbolTitle}>Cred</h3>
                             <div className={styles.leftSectionSubSub}>
-                                <p className={styles.symbol}>{credBalance ? credBalance.toString() : "Loading"}</p>
+                                <p className={styles.symbol}>{credBalance !== null ? credBalance.toString() : "Loading"}</p>
                                 <p className={styles.symbol}>CRED</p>
                             </div>
                         </div>
@@ -85,7 +108,7 @@ const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onI
                     </div>
                 </div>
                 <button
-                    disabled={userInfo ? false : true}
+                    disabled={!userInfo}
                     className={`${styles.rewardsBtn} ${userInfo ? "" : styles.disabled}`}
                     onClick={() => handleSubScreenChange("Rewards")}
                 >
@@ -93,7 +116,7 @@ const HomeContent = ({ web3, userAccount, userInfo, credBalance, ethBalance, onI
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default HomeContent;

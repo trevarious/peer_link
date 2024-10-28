@@ -6,20 +6,32 @@ import FriendRequests from "./FriendRequests";
 import MessageFeed from "./MessageFeed";
 import { Send } from "lucide-react";
 
+interface Friend {
+    address: string;
+    name: string;
+}
+
+// Define the type for the filtered friends
+interface FilteredFriend {
+    address: string;
+    name: string;
+    aboutMe?: string; // Optional since it might not always be present
+}
+
 const FriendPage = () => {
     const { userAccount, peerLink } = useWeb3();
-    const [friends, setFriends] = useState([]);
+    const [friends, setFriends] = useState<any[]>([]); // Use a more specific type if known
     const [subSection, setSubSection] = useState('Rewards');
-    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const grabFriends = async() => {
-        if(userAccount && peerLink) {
+    const grabFriends = async () => {
+        if (userAccount && peerLink) {
             try {
-                const response = await peerLink.methods.getFriendsInfo().call({from: userAccount.address});
+                const response = await peerLink.methods.getFriendsInfo().call({ from: userAccount.address });
                 console.log("Your friends", response);
                 setFriends(response);
-            } catch(err) {
+            } catch (err) {
                 console.log("Error grabbing your friends", err);
             }
         }
@@ -29,16 +41,20 @@ const FriendPage = () => {
         grabFriends();
     }, [peerLink, userAccount]);
 
-    const handleMessageClick = (address, name) => {
+    const handleMessageClick = (address: string, name: string) => {
         setSelectedFriend({ address, name });
         setSubSection('Messages');
     };
 
-    const filteredFriends = friends[0] ? friends[0].map((address, index) => {
-        const friendInfo = friends[1][index];
-        const name = friendInfo.name || friendInfo[0];
-        return name.toLowerCase().includes(searchTerm.toLowerCase()) ? { address, name, aboutMe: friendInfo.aboutMe || friendInfo[1] } : null;
-    }).filter(Boolean) : [];
+    const filteredFriends: FilteredFriend[] = friends[0]
+        ? friends[0].map((address: string, index: number) => {
+            const friendInfo = friends[1][index];
+            const name = friendInfo.name || friendInfo[0];
+            return name.toLowerCase().includes(searchTerm.toLowerCase())
+                ? { address, name, aboutMe: friendInfo.aboutMe || friendInfo[1] }
+                : null;
+        }).filter((friend: any): friend is FilteredFriend => friend !== null) // Type guard to filter nulls
+        : [];
 
     const renderFriendsList = () => {
         if (filteredFriends.length === 0) return <h1>No Friends Found</h1>;
@@ -59,8 +75,8 @@ const FriendPage = () => {
                     <p className={styles.aboutMe}>{aboutMe}</p>
                 </div>
                 <div className={styles.actionButtons}>
-                    <Send 
-                        className={styles.icon} 
+                    <Send
+                        className={styles.icon}
                         onClick={() => handleMessageClick(address, name)}
                     />
                 </div>
