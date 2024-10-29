@@ -283,6 +283,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
 }
 
 .paymentHeader {
@@ -323,74 +324,172 @@
 }
 
 
+.messageBubble.sent.payment {
+    background: rgb(15, 117, 146);
+}
+
+.messageActions {
+    display: none;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.messageBubble:hover .messageActions {
+    display: flex;
+}
+
+.actionButton {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.actionButton:hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.editContainer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.editInput {
+    flex: 1;
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.editActions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.editButton,
+.cancelButton {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.editButton {
+    color: #4CAF50;
+}
+
+.cancelButton {
+    color: #f44336;
+}
+
+.messageFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.editedTag {
+    font-size: 0.8em;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.deletedMessage {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.5);
+}
+
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
     .container {
-        max-height: 80vh; /* Allow more vertical space on smaller screens */
+        max-height: 80vh;
+        /* Allow more vertical space on smaller screens */
     }
 
     .header {
-        padding: 0.5rem; /* Reduced padding for smaller screens */
+        padding: 0.5rem;
+        /* Reduced padding for smaller screens */
     }
 
     .headerInfo h2 {
-        font-size: 1rem; /* Smaller font size */
+        font-size: 1rem;
+        /* Smaller font size */
     }
 
     .headerInfo p {
-        font-size: 0.75rem; /* Adjusted font size for address */
+        font-size: 0.75rem;
+        /* Adjusted font size for address */
     }
 
     .messagesFeed {
-        padding: 0.5rem; /* Reduced padding */
+        padding: 0.5rem;
+        /* Reduced padding */
     }
 
     .messageBubble {
-        max-width: 90%; /* Increase message bubble width */
-        padding: 0.5rem; /* Reduced padding */
+        max-width: 90%;
+        /* Increase message bubble width */
+        padding: 0.5rem;
+        /* Reduced padding */
     }
 
     .senderName,
     .messageTime {
-        font-size: 0.65rem; /* Smaller font size for sender name and time */
+        font-size: 0.65rem;
+        /* Smaller font size for sender name and time */
     }
 
     .inputContainer {
-        padding: 0.5rem; /* Reduced padding */
-        gap: 0.25rem; /* Adjust gap */
+        padding: 0.5rem;
+        /* Reduced padding */
+        gap: 0.25rem;
+        /* Adjust gap */
     }
 
     .messageInput {
-        padding: 0.5rem; /* Adjust input padding */
-        font-size: 0.9rem; /* Smaller font size */
+        padding: 0.5rem;
+        /* Adjust input padding */
+        font-size: 0.9rem;
+        /* Smaller font size */
     }
 
     .sendButton,
     .payButton {
-        padding: 0.4rem; /* Smaller button padding */
+        padding: 0.4rem;
+        /* Smaller button padding */
     }
 
     .paymentModal {
-        padding: 1rem; /* Reduced padding in payment modal */
-        width: 95%; /* Wider on mobile */
+        padding: 1rem;
+        /* Reduced padding in payment modal */
+        width: 95%;
+        /* Wider on mobile */
     }
 
     .paymentForm input {
-        padding: 0.4rem; /* Adjust input padding */
-        font-size: 0.9rem; /* Smaller font size */
+        padding: 0.4rem;
+        /* Adjust input padding */
+        font-size: 0.9rem;
+        /* Smaller font size */
     }
 
     .modalButtons {
-        flex-direction: column; /* Stack buttons vertically on small screens */
+        flex-direction: column;
+        /* Stack buttons vertically on small screens */
     }
 
     .confirmButton,
     .cancelButton {
-        width: 100%; /* Full width buttons */
-        margin-top: 0.5rem; /* Space between buttons */
+        width: 100%;
+        /* Full width buttons */
+        margin-top: 0.5rem;
+        /* Space between buttons */
     }
 
     .paymentAmount {
-        font-size: 1rem; /* Adjusted size for mobile */
+        font-size: 1rem;
+        /* Adjusted size for mobile */
     }
 }

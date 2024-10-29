@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useWeb3 } from "../Web3/Web3";
-import { Send, ArrowLeft, Wallet, Receipt } from 'lucide-react';
+import { Send, ArrowLeft, Wallet, Receipt, Edit2, Trash2, X, Check } from 'lucide-react';
 import styles from './MessageFeed.module.css';
 
 interface Message {
@@ -8,16 +8,18 @@ interface Message {
     senderName: string;
     content: string;
     timestamp: number;
-    messageType: number; // Assuming messageType is a number
+    messageType: number;
+    isEdited: boolean;
+    isDeleted: boolean;
     paymentInfo?: {
-        amount: string; // Amount in wei
-        memo?: string; // Optional memo
+        amount: string;
+        memo?: string;
     };
 }
 
 interface MessageFeedProps {
-    friendAddress: string; // Assuming it's a string
-    friendName: string; // Assuming it's a string
+    friendAddress: string;
+    friendName: string;
     onBack: () => void;
 }
 
@@ -28,6 +30,8 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
     const [paymentMemo, setPaymentMemo] = useState('');
+    const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
+    const [editedContent, setEditedContent] = useState('');
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const scrollToBottom = () => {
@@ -73,6 +77,34 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
         }
     };
 
+    const handleEditMessage = async (index: number) => {
+        if (!peerSystemContracts?.peerChat || !userAccount) return;
+
+        try {
+            await peerSystemContracts.peerChat.methods
+                .editMessage(friendAddress, index, editedContent)
+                .send({ from: userAccount.address });
+            setEditingMessageIndex(null);
+            setEditedContent('');
+            fetchMessages();
+        } catch (err) {
+            console.error("Error editing message:", err);
+        }
+    };
+
+    const handleDeleteMessage = async (index: number) => {
+        if (!peerSystemContracts?.peerChat || !userAccount) return;
+
+        try {
+            await peerSystemContracts.peerChat.methods
+                .deleteMessage(friendAddress, index)
+                .send({ from: userAccount.address });
+            fetchMessages();
+        } catch (err) {
+            console.error("Error deleting message:", err);
+        }
+    };
+
     const handleSendPayment = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!paymentAmount || !peerSystemContracts?.peerChat || userAccount == null) return;
@@ -97,21 +129,35 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
         }
     };
 
+    const startEditing = (message: Message, index: number) => {
+        setEditingMessageIndex(index);
+        setEditedContent(message.content);
+    };
+
+    const cancelEditing = () => {
+        setEditingMessageIndex(null);
+        setEditedContent('');
+    };
+
     const renderMessage = (message: Message, index: number) => {
         const isOwnMessage = message.sender.toLowerCase() === userAccount?.address.toLowerCase();
-        const isPayment = message.messageType === 1; // PAYMENT type from enum
+        const isPayment = message.messageType.toString() == '1';
+        const isEditing = editingMessageIndex === index;
+
+        if (message.isDeleted) {
+            return (
+                <div key={index} className={`${styles.messageGroup} ${isOwnMessage ? styles.sent : styles.received}`}>
+                    <div className={`${styles.messageBubble} ${styles.deletedMessage}`}>
+                        <p>Message deleted</p>
+                    </div>
+                </div>
+            );
+        }
 
         return (
-            <div
-                key={index}
-                className={`${styles.messageGroup} ${isOwnMessage ? styles.sent : styles.received}`}
-            >
-                <div
-                    className={`${styles.messageBubble} ${isOwnMessage ? styles.sent : styles.received} ${isPayment ? styles.payment : ''}`}
-                >
-                    {!isOwnMessage && (
-                        <p className={styles.senderName}>{message.senderName}</p>
-                    )}
+            <div key={index} className={`${styles.messageGroup} ${isOwnMessage ? styles.sent : styles.received}`}>
+                <div className={`${styles.messageBubble} ${isOwnMessage ? styles.sent : styles.received} ${isPayment ? styles.payment : ''}`}>
+                    {!isOwnMessage && <p className={styles.senderName}>{message.senderName}</p>}
 
                     {isPayment && message.paymentInfo ? (
                         <div className={styles.paymentInfo}>
@@ -129,13 +175,56 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
                                 </div>
                             )}
                         </div>
+                    ) : isEditing ? (
+                        <div className={styles.editContainer}>
+                            <input
+                                type="text"
+                                value={editedContent}
+                                onChange={(e) => setEditedContent(e.target.value)}
+                                className={styles.editInput}
+                            />
+                            <div className={styles.editActions}>
+                                <button
+                                    onClick={() => handleEditMessage(index)}
+                                    className={styles.editButton}
+                                >
+                                    <Check size={16} />
+                                </button>
+                                <button
+                                    onClick={cancelEditing}
+                                    className={styles.cancelButton}
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         <p>{message.content}</p>
                     )}
 
-                    <p className={styles.messageTime}>
-                        {new Date(Number(message.timestamp) * 1000).toLocaleTimeString()}
-                    </p>
+                    <div className={styles.messageFooter}>
+                        <p className={styles.messageTime}>
+                            {new Date(Number(message.timestamp) * 1000).toLocaleTimeString()}
+                            {message.isEdited && <span className={styles.editedTag}> (edited)</span>}
+                        </p>
+
+                        {isOwnMessage && !isPayment && !isEditing && (
+                            <div className={styles.messageActions}>
+                                <button
+                                    onClick={() => startEditing(message, index)}
+                                    className={styles.actionButton}
+                                >
+                                    <Edit2 size={14} />
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteMessage(index)}
+                                    className={styles.actionButton}
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         );
@@ -143,7 +232,6 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
 
     return (
         <div className={styles.container}>
-            {/* Header */}
             <div className={styles.header}>
                 <button onClick={onBack} className={styles.backButton}>
                     <ArrowLeft size={24} />
@@ -154,13 +242,11 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
                 </div>
             </div>
 
-            {/* Messages */}
             <div className={styles.messagesFeed}>
                 {messages.map(renderMessage)}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input */}
             <form onSubmit={handleSendMessage} className={styles.inputContainer}>
                 <input
                     type="text"
@@ -183,7 +269,6 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ friendAddress, friendName, on
                 </div>
             </form>
 
-            {/* Payment Modal */}
             {showPaymentModal && (
                 <>
                     <div className={styles.modalOverlay} onClick={() => setShowPaymentModal(false)} />
