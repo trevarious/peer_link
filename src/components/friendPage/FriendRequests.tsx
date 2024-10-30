@@ -153,7 +153,7 @@ const FriendRequests: React.FC<FriendRequestsProps> = ({ onStateChange }) => {
             <h2>Friend Requests</h2>
             <div className={styles.backButton}>
                 <img
-                    onClick={() => onStateChange("Friends")}
+                    onClick={() => onStateChange("Rewards")}
                     className={styles.backButton}
                     src={back}
                     alt="back-button"

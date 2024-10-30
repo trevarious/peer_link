@@ -2,6 +2,7 @@ import { useWeb3 } from "../Web3/Web3";
 import { useEffect, useState } from "react";
 import styles from "./FriendPage.module.css";
 import SendFriendRequest from "./SendFriendRequest";
+import FriendInfo from "./FriendInfo";
 import FriendRequests from "./FriendRequests";
 import MessageFeed from "./MessageFeed";
 import { Send } from "lucide-react";
@@ -23,6 +24,7 @@ const FriendPage = () => {
     const [friends, setFriends] = useState<any[]>([]); // Use a more specific type if known
     const [subSection, setSubSection] = useState('Rewards');
     const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
+    const [selectedFriendInfo, setSelectedFriendInfo] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
     const grabFriends = async () => {
@@ -46,6 +48,7 @@ const FriendPage = () => {
         setSubSection('Messages');
     };
 
+
     const filteredFriends: FilteredFriend[] = friends[0]
         ? friends[0].map((address: string, index: number) => {
             const friendInfo = friends[1][index];
@@ -60,7 +63,10 @@ const FriendPage = () => {
         if (filteredFriends.length === 0) return <h1>No Friends Found</h1>;
 
         return filteredFriends.map(({ address, name, aboutMe }, index) => (
-            <div key={`${address}-${index}`} className={styles.friendItem}>
+            <div onClick={() => {
+                setSelectedFriendInfo(address);
+                setSubSection("Friend Info")
+            }} key={`${address}-${index}`} className={styles.friendItem}>
                 <div className={styles.friendDetails}>
                     <h3 className={styles.friendName}>{name}</h3>
                     <p className={styles.friendAddress}>
@@ -77,7 +83,10 @@ const FriendPage = () => {
                 <div className={styles.actionButtons}>
                     <Send
                         className={styles.icon}
-                        onClick={() => handleMessageClick(address, name)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleMessageClick(address, name)
+                        }}
                     />
                 </div>
             </div>
@@ -95,7 +104,7 @@ const FriendPage = () => {
                         setSelectedFriend(null);
                     }}
                 />
-            ) : (
+            ) : subSection === 'Friend Info' ? <FriendInfo friendAddress={selectedFriendInfo} onStateChange={setSubSection} /> : (
                 <>
                     <h1 className={styles.title}>Friends</h1>
                     <input
