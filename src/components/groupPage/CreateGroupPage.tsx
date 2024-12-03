@@ -74,6 +74,7 @@ const CreateGroupPage: React.FC<CreateGroupPageProps> = ({
 
         // Type guard to handle checkbox events
         const isCheckboxEvent = (event: any): event is React.ChangeEvent<HTMLInputElement> => {
+            console.log("Event", event);
             return type === "checkbox";
         };
 
