@@ -1,9 +1,58 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, Users, Coins, Plus, Minus, AlertCircle } from "lucide-react";
 import styles from "./CreateGroupPage.module.css";
 
-const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
-    const [formData, setFormData] = useState({
+// Define interfaces for type safety
+interface TreasuryConfig {
+    autoDistribute: boolean;
+    adminShare: string;
+    memberShare: string;
+    minHoldPeriod: string;
+}
+
+interface FormData {
+    name: string;
+    about: string;
+    initialMembers: string[];
+    allowDonations: boolean;
+    minDonationAmount: string;
+    treasuryConfig: TreasuryConfig;
+}
+
+// Define prop types
+interface CreateGroupPageProps {
+    onBack: (createMode: boolean) => void;
+    userAccount: {
+        address: string;
+    };
+    peerSystemContracts: {
+        peerGroups: {
+            methods: {
+                createGroup: (
+                    name: string,
+                    about: string,
+                    members: string[],
+                    allowDonations: boolean,
+                    minDonationAmount: number,
+                    treasuryConfig: {
+                        autoDistribute: boolean;
+                        adminShare: number;
+                        memberShare: number;
+                        minHoldPeriod: number;
+                        lastDistribution: number;
+                    }
+                ) => { send: (params: { from: string }) => Promise<void> }
+            }
+        }
+    };
+}
+
+const CreateGroupPage: React.FC<CreateGroupPageProps> = ({
+    onBack,
+    userAccount,
+    peerSystemContracts
+}) => {
+    const [formData, setFormData] = useState<FormData>({
         name: "",
         about: "",
         initialMembers: [""],
@@ -17,18 +66,24 @@ const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
         }
     });
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = e.target;
+
+        // Type guard to handle checkbox events
+        const isCheckboxEvent = (event: any): event is React.ChangeEvent<HTMLInputElement> => {
+            return type === "checkbox";
+        };
+
         setFormData(prev => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value
+            [name]: isCheckboxEvent(e) ? e.target.checked : value
         }));
     };
 
-    const handleTreasuryConfigChange = (e) => {
+    const handleTreasuryConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
 
         // For percentage inputs, ensure they stay within 0-100
@@ -46,7 +101,7 @@ const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
         }));
     };
 
-    const handleMemberInputChange = (index, value) => {
+    const handleMemberInputChange = (index: number, value: string) => {
         const newMembers = [...formData.initialMembers];
         newMembers[index] = value;
         setFormData(prev => ({
@@ -62,7 +117,7 @@ const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
         }));
     };
 
-    const removeMemberField = (index) => {
+    const removeMemberField = (index: number) => {
         if (formData.initialMembers.length > 1) {
             setFormData(prev => ({
                 ...prev,
@@ -71,7 +126,7 @@ const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
         setError("");
@@ -120,7 +175,7 @@ const CreateGroupPage = ({ onBack, userAccount, peerSystemContracts }) => {
             onBack(false);
         } catch (err) {
             console.error("Group creation error:", err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : String(err));
         } finally {
             setIsLoading(false);
         }
