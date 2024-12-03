@@ -1,10 +1,35 @@
 import { useEffect, useState } from "react";
 import { useWeb3 } from "../Web3/Web3";
 import styles from "./GroupPage.module.css";
-import { Users, Coins, Plus } from "lucide-react";
+import { Users, Plus } from "lucide-react";
 import CreateGroupPage from "./CreateGroupPage";
 
-const GroupCard = ({ group }) => {
+interface Group {
+    id: string;
+    name: string;
+    about: string;
+    createdAt: string;
+    creator: string;
+    memberCount: number;
+    isActive: boolean;
+    allowDonations: boolean;
+    minDonationAmount: number;
+    totalDonations: number;
+    balance: number;
+    treasuryConfig: {
+        autoDistribute: boolean;
+        adminShare: number;
+        memberShare: number;
+        minHoldPeriod: number;
+        lastDistribution: string;
+    };
+}
+
+// interface UserAccount {
+//     address: string;
+// }
+
+const GroupCard = ({ group }: { group: Group }) => {
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>
@@ -42,31 +67,27 @@ const GroupCard = ({ group }) => {
 
 const GroupPage = () => {
     const { userAccount, peerSystemContracts } = useWeb3();
-    const [priceToCreateGroup, setPriceToCreateGroup] = useState(null);
-    const [userGroups, setUserGroups] = useState([]);
-    const [showCreateGroup, setShowCreateGroup] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [priceToCreateGroup, setPriceToCreateGroup] = useState<string | null>(null);
+    const [userGroups, setUserGroups] = useState<Group[]>([]);
+    const [showCreateGroup, setShowCreateGroup] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const fetchUserGroups = async () => {
         if (!userAccount || !peerSystemContracts?.peerGroups) return;
 
         try {
             setIsLoading(true);
-            // First get all group IDs for the user
             const groupIds = await peerSystemContracts.peerGroups.methods
                 .getUserGroupIds(userAccount.address)
                 .call({ from: userAccount.address });
             console.log("Group Id's: ", groupIds);
 
-            // Then fetch details for each group
-            const groupPromises = groupIds.map(async (groupId) => {
+            const groupPromises = groupIds.map(async (groupId: string) => {
                 const groupInfo = await peerSystemContracts.peerGroups.methods
                     .getGroupInfo(groupId)
                     .call({ from: userAccount.address });
-                console.log("Group Info: ", groupPromises);
+                console.log("Group Info: ", groupInfo);
 
-
-                // Convert the response object to a more friendly format
                 return {
                     id: groupId,
                     name: groupInfo.name,
