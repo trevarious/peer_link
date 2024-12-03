@@ -1,0 +1,8 @@
+to deploy an svg as the image to your nft collection, you must cast the svg into a bytes64  by executing the following command...
+in your terminal: base64 -i <file.svg>. 
+
+you must have in your baseURL: data:image/svg+xml;base64
+
+
+here is the full URL that you can use to view the nft in a decentralized way:
+

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useWeb3 } from "../Web3/Web3";
 import styles from './HomePage.module.css';
 import FriendPage from "../friendPage/FriendPage"
+import GroupPage from "../groupPage/GroupPage"
 import peerLinkLogo from "../../assets/peer-link-logo-nobg-big.png";
 // import { CredToken } from "../svgs/CredSvg"
 // import credCoin from "../../assets/cred-erc.png";
@@ -39,7 +40,61 @@ const HomePage = () => {
             }
         }
     };
+    const changeUsername = async () => {
+        if (!userAccount || !peerLink || !userInfo) {
+            return;
+        }
+        let answer: any = prompt(`Updating your name will cost 500 CRED. Type 'yes' to continue.`);
+        if (answer.toLocaleLowerCase() != 'yes') {
+            return;
+        }
+        let newname: any = prompt("Please enter a new username");
+        if (newname.length < 1) {
+            return;
+        }
+        if (newname == userInfo[0][0]) {
+            alert("This matches your current name");
+            return;
+        }
+        try {
+            await peerLink.methods.updateName(newname).send({ from: userAccount.address }).on('receipt', (receipt: any) => {
+                console.log("You changed your name !");
+                console.log(receipt);
+                getUserInfo();
+            });
 
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const changeBio = async () => {
+        if (!userAccount || !peerLink) {
+            return;
+        }
+        let answer: any = prompt(`Updating your bio will cost 500 CRED. Type 'yes' to continue.`);
+        if (answer.toLowerCase() != 'yes') {
+            return;
+        }
+        let bio: any = prompt("Please enter a new bio");
+        if (bio.length < 1) {
+            return;
+        }
+        if (bio.split(" ").length < 2) {
+            alert("Must enter more than one word");
+            return;
+        }
+        try {
+            await peerLink.methods.updateBio(bio).send({ from: userAccount.address }).on("receipt", (receipt: any) => {
+                console.log("You changed your bio!");
+                console.log(receipt);
+                getUserInfo();
+            })
+
+        } catch (err) {
+            console.log("Error changing bio", err);
+        }
+    }
     const getRewardsInfo = async () => {
         if (userAccount && peerSystemContracts) {
             if (peerSystemContracts.peerRewards) {
@@ -203,8 +258,8 @@ const HomePage = () => {
                         {userInfo ?
                             <>
                                 <img src={peerLinkLogo} alt="Profile" className={styles.profileImg} />
-                                <h1 className={styles.profileName}>{userInfo ? userInfo[0][0] : "Loading"}</h1>
-                                <p className={styles.profileBio}>{userInfo ? userInfo[0][1] : "Loading"}</p>
+                                <h1 onClick={changeUsername} className={styles.profileName}>{userInfo ? userInfo[0][0] : "Loading"}</h1>
+                                <p onClick={changeBio} className={styles.profileBio}>{userInfo ? userInfo[0][1] : "Loading"}</p>
 
                             </>
                             : <h1>No Connection...</h1>}
@@ -212,7 +267,7 @@ const HomePage = () => {
                     <div className={styles.subSectionContainer}>
                         {activeSubScreen == "Home" ?
                             <HomeContent web3={web3} userAccount={userAccount} userInfo={userInfo} credBalance={credBalance ? credBalance : "..."} ethBalance={ethBalance} onIncreaseReputation={onIncreaseReputation} handleSubScreenChange={handleSubScreenChange} depositETH={depositETH} widthdrawETH={withdrawETH} costToIncreaseReputation={costToIncreaseReputation} />
-                            : activeSubScreen === "Rewards" ? <RewardPage handleStateChange={setActiveSubScreen} /> : activeSubScreen === "Friends" ? <FriendPage /> : ""}
+                            : activeSubScreen === "Rewards" ? <RewardPage handleStateChange={setActiveSubScreen} /> : activeSubScreen === "Friends" ? <FriendPage /> : activeSubScreen === "Groups" ? <GroupPage /> : ""}
                     </div>
                     <div className={styles.buttonContainer}>
                         <button
@@ -238,7 +293,10 @@ const HomePage = () => {
                         </button>
                         <button
                             className={`${styles.optionsBtn} ${activeButton === 'groups' ? styles.active : ''}`}
-                            onClick={() => handleButtonClick('groups')}
+                            onClick={() => {
+                                handleButtonClick('groups');
+                                setActiveSubScreen("Groups");
+                            }}
                         >
                             Groups
                         </button>
